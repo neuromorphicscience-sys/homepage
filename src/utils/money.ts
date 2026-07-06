@@ -1,11 +1,12 @@
 export const YUAN_TO_CENTS = 100;
+export const WAN_YUAN_TO_CENTS = 10_000 * YUAN_TO_CENTS;
 
-export function parseYuanToCents(value: string | number): number {
+export function parseWanYuanToCents(value: string | number): number {
   const raw = String(value ?? "").replace(/,/g, "").trim();
   if (!raw) return 0;
   const normalized = Number(raw);
   if (!Number.isFinite(normalized)) return 0;
-  return Math.round(normalized * YUAN_TO_CENTS);
+  return Math.round(normalized * WAN_YUAN_TO_CENTS);
 }
 
 export function centsToYuan(cents: number): number {
@@ -29,12 +30,9 @@ export function formatPlainMoney(cents: number): string {
 }
 
 export function formatWan(value: string | number): string {
-  const cents = parseYuanToCents(value);
+  const cents = parseWanYuanToCents(value);
   if (cents <= 0) return "";
-  const wan = centsToYuan(cents) / 10_000;
-  return `约 ${new Intl.NumberFormat("zh-CN", {
-    maximumFractionDigits: 2,
-  }).format(wan)} 万元`;
+  return `折合 ${formatMoney(cents)}`;
 }
 
 export function formatPercent(value: number): string {

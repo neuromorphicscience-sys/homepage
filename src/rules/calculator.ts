@@ -8,7 +8,7 @@ import type {
   ValidationMessage,
 } from "../types";
 import { FUND_NAMES, getTierRules } from "./policyRules";
-import { allocateByBasisPoints, parseYuanToCents, prorateCents } from "../utils/money";
+import { allocateByBasisPoints, parseWanYuanToCents, prorateCents } from "../utils/money";
 
 const ZERO_BY_FUND: Record<FundKey, number> = {
   team: 0,
@@ -31,12 +31,12 @@ function cloneZeroFund(): Record<FundKey, number> {
 }
 
 function buildCostBreakdown(form: FormState, isFirstReceipt: boolean, currentReceiptCents: number): CostBreakdown {
-  const patentCents = parseYuanToCents(form.costs.patent);
-  const businessCents = parseYuanToCents(form.costs.business);
-  const taxCents = parseYuanToCents(form.costs.tax);
-  const evaluationCents = parseYuanToCents(form.costs.evaluation);
-  const managerConsultingCents = parseYuanToCents(form.costs.managerConsulting);
-  const otherCents = parseYuanToCents(form.costs.other);
+  const patentCents = parseWanYuanToCents(form.costs.patent);
+  const businessCents = parseWanYuanToCents(form.costs.business);
+  const taxCents = parseWanYuanToCents(form.costs.tax);
+  const evaluationCents = parseWanYuanToCents(form.costs.evaluation);
+  const managerConsultingCents = parseWanYuanToCents(form.costs.managerConsulting);
+  const otherCents = parseWanYuanToCents(form.costs.other);
   const enteredCostCents =
     patentCents + businessCents + taxCents + evaluationCents + managerConsultingCents + otherCents;
   const totalCostCents = isFirstReceipt ? enteredCostCents : 0;
@@ -55,9 +55,9 @@ function buildCostBreakdown(form: FormState, isFirstReceipt: boolean, currentRec
 
 function validate(form: FormState, costBreakdown: CostBreakdown): ValidationMessage[] {
   const messages: ValidationMessage[] = [];
-  const contractAmountCents = parseYuanToCents(form.contractAmount);
-  const currentReceiptCents = parseYuanToCents(form.currentReceipt);
-  const previousReceiptCents = parseYuanToCents(form.previousReceipt);
+  const contractAmountCents = parseWanYuanToCents(form.contractAmount);
+  const currentReceiptCents = parseWanYuanToCents(form.currentReceipt);
+  const previousReceiptCents = parseWanYuanToCents(form.previousReceipt);
   const isFirstReceipt = previousReceiptCents === 0;
 
   if (contractAmountCents <= 0) {
@@ -80,7 +80,7 @@ function validate(form: FormState, costBreakdown: CostBreakdown): ValidationMess
   }
 
   for (const field of COST_FIELDS) {
-    if (parseYuanToCents(form.costs[field]) < 0) {
+    if (parseWanYuanToCents(form.costs[field]) < 0) {
       messages.push({ type: "error", message: "成本项不能小于 0。" });
       break;
     }
@@ -209,9 +209,9 @@ function buildFinalRows(
 }
 
 export function calculateDistribution(form: FormState): CalculationResult {
-  const contractAmountCents = parseYuanToCents(form.contractAmount);
-  const currentReceiptCents = parseYuanToCents(form.currentReceipt);
-  const previousReceiptCents = parseYuanToCents(form.previousReceipt);
+  const contractAmountCents = parseWanYuanToCents(form.contractAmount);
+  const currentReceiptCents = parseWanYuanToCents(form.currentReceipt);
+  const previousReceiptCents = parseWanYuanToCents(form.previousReceipt);
   const isFirstReceipt = previousReceiptCents === 0;
   const costBreakdown = buildCostBreakdown(form, isFirstReceipt, currentReceiptCents);
   const messages = validate(form, costBreakdown);

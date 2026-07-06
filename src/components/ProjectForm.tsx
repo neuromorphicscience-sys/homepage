@@ -54,33 +54,33 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
           <input value={form.transferee} onChange={(event) => onChange("transferee", event.target.value)} />
         </label>
         <label>
-          合同总金额（元）
+          合同总金额（万元）
           <input
             type="number"
             min="0"
-            step="0.01"
+            step="0.0001"
             value={form.contractAmount}
             onChange={(event) => onChange("contractAmount", event.target.value)}
           />
           <FieldHint value={form.contractAmount} />
         </label>
         <label>
-          本次到账金额（元）
+          本次到账金额（万元）
           <input
             type="number"
             min="0"
-            step="0.01"
+            step="0.0001"
             value={form.currentReceipt}
             onChange={(event) => onChange("currentReceipt", event.target.value)}
           />
           <FieldHint value={form.currentReceipt} />
         </label>
         <label>
-          本次前累计到账金额（元）
+          本次前累计到账金额（万元）
           <input
             type="number"
             min="0"
-            step="0.01"
+            step="0.0001"
             value={form.previousReceipt}
             onChange={(event) => onChange("previousReceipt", event.target.value)}
           />

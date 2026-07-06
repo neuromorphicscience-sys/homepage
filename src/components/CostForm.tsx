@@ -39,11 +39,11 @@ export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
           const hint = formatWan(costs[key]);
           return (
             <label key={key} className={!isFirstReceipt ? "is-disabled" : ""}>
-              {label}（元）
+              {label}（万元）
               <input
                 type="number"
                 min="0"
-                step="0.01"
+                step="0.0001"
                 value={costs[key]}
                 disabled={!isFirstReceipt}
                 onChange={(event) => onChange(key, event.target.value)}
