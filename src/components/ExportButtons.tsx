@@ -1,6 +1,6 @@
 import { ClipboardCopy, Download, FileJson, Printer } from "lucide-react";
 import type { CalculationResult, FormState } from "../types";
-import { copyResultText, exportCsv, exportJson } from "../utils/export";
+import { copyResultText, exportCsv, exportJson, exportPrintablePdf } from "../utils/export";
 
 interface ExportButtonsProps {
   form: FormState;
@@ -20,9 +20,27 @@ export function ExportButtons({ form, result, onStatus }: ExportButtonsProps) {
     }
   };
 
+  const printPdf = () => {
+    try {
+      exportPrintablePdf(form, result);
+      onStatus("已打开打印版页面，请在打印窗口中选择“另存为 PDF”。");
+    } catch {
+      onStatus("打印版页面打开失败，请检查浏览器弹窗拦截设置。");
+    }
+  };
+
+  const downloadCsv = () => {
+    try {
+      exportCsv(result);
+      onStatus("CSV 文件已开始下载。");
+    } catch {
+      onStatus("CSV 导出失败，请稍后重试或更换浏览器。");
+    }
+  };
+
   return (
     <div className="export-bar no-print" aria-label="导出和复制">
-      <button type="button" onClick={() => window.print()} disabled={disabled} title="打印或导出 PDF">
+      <button type="button" onClick={printPdf} disabled={disabled} title="打印或导出 PDF">
         <Printer size={18} />
         打印 / 导出 PDF
       </button>
@@ -30,7 +48,7 @@ export function ExportButtons({ form, result, onStatus }: ExportButtonsProps) {
         <FileJson size={18} />
         导出 JSON
       </button>
-      <button type="button" onClick={() => exportCsv(result)} disabled={disabled} title="导出 CSV">
+      <button type="button" onClick={downloadCsv} disabled={disabled} title="导出 CSV">
         <Download size={18} />
         导出 CSV
       </button>
