@@ -23,7 +23,6 @@ const COST_FIELDS: Array<keyof FormState["costs"]> = [
   "business",
   "tax",
   "evaluation",
-  "managerConsulting",
   "other",
 ];
 
@@ -36,10 +35,8 @@ function buildCostBreakdown(form: FormState, isFirstReceipt: boolean, currentRec
   const businessCents = parseYuanToCents(form.costs.business);
   const taxCents = parseYuanToCents(form.costs.tax);
   const evaluationCents = parseYuanToCents(form.costs.evaluation);
-  const managerConsultingCents = parseYuanToCents(form.costs.managerConsulting);
-  const otherCents = parseYuanToCents(form.costs.other);
-  const enteredCostCents =
-    patentCents + businessCents + taxCents + evaluationCents + managerConsultingCents + otherCents;
+  const otherCostCents = parseYuanToCents(form.costs.other);
+  const enteredCostCents = patentCents + businessCents + taxCents + evaluationCents + otherCostCents;
   const totalCostCents = isFirstReceipt ? enteredCostCents : 0;
 
   return {
@@ -47,8 +44,7 @@ function buildCostBreakdown(form: FormState, isFirstReceipt: boolean, currentRec
     businessCents,
     taxCents,
     evaluationCents,
-    managerConsultingCents,
-    otherCents,
+    otherCostCents,
     totalCostCents,
     distributableNetIncomeCents: currentReceiptCents - totalCostCents,
   };
@@ -234,8 +230,7 @@ function buildDisplayParts(
   const schoolTotalCents = schoolRows.reduce((sum, row) => sum + row.finalCents, 0);
 
   const researchFundCompensationCents = isFirstReceipt && includeCompensation ? costBreakdown.businessCents : 0;
-  const personalCompensationCents =
-    isFirstReceipt && includeCompensation ? costBreakdown.patentCents + costBreakdown.otherCents : 0;
+  const personalCompensationCents = isFirstReceipt && includeCompensation ? costBreakdown.patentCents : 0;
   const inventorRows: AllocationDisplayRow[] = [
     rowForFund("team"),
     {

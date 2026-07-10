@@ -15,8 +15,7 @@ const patentCostLabels: Array<[keyof CostInputs, string]> = [
 const costLabels: Array<[keyof CostInputs, string]> = [
   ["tax", "税费"],
   ["evaluation", "评估费"],
-  ["managerConsulting", "技术经理人咨询服务费"],
-  ["other", "个人承担费用"],
+  ["other", "其他成本"],
 ];
 
 export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
@@ -50,7 +49,7 @@ export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
       </div>
 
       <div className="notice notice--info">
-        成本补偿口径：个人承担专利成本及个人承担费用补偿至个人；科研经费或发展基金支出补偿至成果完成人科研发展基金。完成成本补偿后，再对本次可分配净收益按比例分配。
+        成本补偿口径：个人承担专利成本补偿至个人；科研经费或发展基金支出补偿至成果完成人科研发展基金；其他成本仅作成本扣除。完成成本补偿后，再对本次可分配净收益按比例分配。
       </div>
 
       {!isFirstReceipt && (

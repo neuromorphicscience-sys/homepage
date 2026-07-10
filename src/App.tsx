@@ -15,7 +15,6 @@ const emptyCosts: CostInputs = {
   business: "0",
   tax: "0",
   evaluation: "0",
-  managerConsulting: "0",
   other: "0",
 };
 
@@ -56,8 +55,7 @@ const firstReceiptExample: FormState = {
     business: "300000",
     tax: "300000",
     evaluation: "100000",
-    managerConsulting: "100000",
-    other: "0",
+    other: "100000",
   },
 };
 
@@ -80,8 +78,7 @@ const followUpExample: FormState = {
     business: "300000",
     tax: "300000",
     evaluation: "100000",
-    managerConsulting: "100000",
-    other: "0",
+    other: "100000",
   },
 };
 

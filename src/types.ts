@@ -12,7 +12,6 @@ export interface CostInputs {
   business: string;
   tax: string;
   evaluation: string;
-  managerConsulting: string;
   other: string;
 }
 
@@ -89,8 +88,7 @@ export interface CostBreakdown {
   businessCents: number;
   taxCents: number;
   evaluationCents: number;
-  managerConsultingCents: number;
-  otherCents: number;
+  otherCostCents: number;
   totalCostCents: number;
   distributableNetIncomeCents: number;
 }

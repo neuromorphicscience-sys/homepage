@@ -103,20 +103,20 @@ export function ResultTables({ form, result }: ResultTablesProps) {
               <tr>
                 <th>科研经费或发展基金支出（元）</th>
                 <td>{formatMoney(result.costBreakdown.businessCents)}</td>
-                <th>个人承担费用（元）</th>
-                <td>{formatMoney(result.costBreakdown.otherCents)}</td>
+                <th>其他成本（元）</th>
+                <td>{formatMoney(result.costBreakdown.otherCostCents)}</td>
               </tr>
               <tr>
-                <th>技术经理人咨询服务费（元）</th>
-                <td>{formatMoney(result.costBreakdown.managerConsultingCents)}</td>
                 <th>本次成本合计（元）</th>
                 <td>{formatMoney(result.costBreakdown.totalCostCents)}</td>
+                <th>成本扣除口径</th>
+                <td>{result.isFirstReceipt ? "首次进账集中扣除" : "后续进账不重复扣除"}</td>
               </tr>
               <tr className="table-emphasis">
                 <th>本次可分配净收益（元）</th>
                 <td>{formatMoney(result.costBreakdown.distributableNetIncomeCents)}</td>
-                <th>成本扣除口径</th>
-                <td>{result.isFirstReceipt ? "首次进账集中扣除" : "后续进账不重复扣除"}</td>
+                <th>成本补偿口径</th>
+                <td>先补偿成本，再按比例分配</td>
               </tr>
             </tbody>
           </table>
@@ -149,7 +149,7 @@ export function ResultTables({ form, result }: ResultTablesProps) {
           尾差调整：{formatMoney(result.tailAdjustmentCents)}，已计入成果完成人科研发展基金。
         </p>
         <p className="tail-note">
-          成本补偿说明：个人承担专利成本及个人承担费用补偿至个人；科研经费或发展基金支出补偿至成果完成人科研发展基金；补偿完成后再对本次可分配净收益按比例分配。
+          成本补偿说明：个人承担专利成本补偿至个人；科研经费或发展基金支出补偿至成果完成人科研发展基金；其他成本仅作成本扣除；补偿完成后再对本次可分配净收益按比例分配。
         </p>
       </section>
 
