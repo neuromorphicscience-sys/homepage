@@ -7,9 +7,12 @@ interface CostFormProps {
   onChange: <K extends keyof CostInputs>(key: K, value: CostInputs[K]) => void;
 }
 
-const costLabels: Array<[keyof CostInputs, string]> = [
-  ["patent", "专利成本补偿"],
+const patentCostLabels: Array<[keyof CostInputs, string]> = [
+  ["patent", "个人承担专利成本"],
   ["business", "科研经费或发展基金支出"],
+];
+
+const costLabels: Array<[keyof CostInputs, string]> = [
   ["tax", "税费"],
   ["evaluation", "评估费"],
   ["managerConsulting", "技术经理人咨询服务费"],
@@ -17,6 +20,24 @@ const costLabels: Array<[keyof CostInputs, string]> = [
 ];
 
 export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
+  const renderCostField = ([key, label]: [keyof CostInputs, string]) => {
+    const hint = formatWan(costs[key]);
+    return (
+      <label key={key} className={!isFirstReceipt ? "is-disabled" : ""}>
+        {label}（元）
+        <input
+          type="number"
+          min="0"
+          step="1"
+          value={costs[key]}
+          disabled={!isFirstReceipt}
+          onChange={(event) => onChange(key, event.target.value)}
+        />
+        {hint && <span className="field-hint">{hint}</span>}
+      </label>
+    );
+  };
+
   return (
     <section className={`panel ${!isFirstReceipt ? "panel--muted" : ""}`}>
       <div className="section-heading">
@@ -34,24 +55,13 @@ export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
         </div>
       )}
 
+      <fieldset className="cost-fieldset">
+        <legend>专利成本补偿</legend>
+        <div className="form-grid form-grid--compact">{patentCostLabels.map(renderCostField)}</div>
+      </fieldset>
+
       <div className="form-grid">
-        {costLabels.map(([key, label]) => {
-          const hint = formatWan(costs[key]);
-          return (
-            <label key={key} className={!isFirstReceipt ? "is-disabled" : ""}>
-              {label}（元）
-              <input
-                type="number"
-                min="0"
-                step="1"
-                value={costs[key]}
-                disabled={!isFirstReceipt}
-                onChange={(event) => onChange(key, event.target.value)}
-              />
-              {hint && <span className="field-hint">{hint}</span>}
-            </label>
-          );
-        })}
+        {costLabels.map(renderCostField)}
       </div>
     </section>
   );

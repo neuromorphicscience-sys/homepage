@@ -97,7 +97,7 @@ export function ResultTables({ form, result }: ResultTablesProps) {
               <tr>
                 <th>评估费（元）</th>
                 <td>{formatMoney(result.costBreakdown.evaluationCents)}</td>
-                <th>专利成本补偿</th>
+                <th>个人承担专利成本（元）</th>
                 <td>{formatMoney(result.costBreakdown.patentCents)}</td>
               </tr>
               <tr>
@@ -155,8 +155,8 @@ export function ResultTables({ form, result }: ResultTablesProps) {
           <span>复核明细</span>
           <h2>阶梯计算明细表</h2>
         </div>
-        <div className="table-wrap">
-          <table>
+        <div className="table-wrap table-wrap--wide">
+          <table className="detail-table">
             <thead>
               <tr>
                 <th>阶梯区间</th>

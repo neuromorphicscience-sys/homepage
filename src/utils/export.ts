@@ -145,7 +145,7 @@ export function exportPrintablePdf(form: FormState, result: CalculationResult): 
 
   const netIncomeRows = [
     ["本次到账现金（元）", formatMoney(result.inputsCents.currentReceiptCents), "税费（元）", formatMoney(result.costBreakdown.taxCents)],
-    ["评估费（元）", formatMoney(result.costBreakdown.evaluationCents), "专利成本补偿", formatMoney(result.costBreakdown.patentCents)],
+    ["评估费（元）", formatMoney(result.costBreakdown.evaluationCents), "个人承担专利成本（元）", formatMoney(result.costBreakdown.patentCents)],
     ["科研经费或发展基金支出（元）", formatMoney(result.costBreakdown.businessCents), "个人承担费用（元）", formatMoney(result.costBreakdown.otherCents)],
     ["技术经理人咨询服务费（元）", formatMoney(result.costBreakdown.managerConsultingCents), "本次成本合计（元）", formatMoney(result.costBreakdown.totalCostCents)],
     ["本次可分配净收益（元）", formatMoney(result.costBreakdown.distributableNetIncomeCents), "成本扣除口径", result.isFirstReceipt ? "首次进账集中扣除" : "后续进账不重复扣除"],
