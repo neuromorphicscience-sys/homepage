@@ -359,10 +359,16 @@ button:disabled {
   border-top: 4px solid var(--sdu-red);
 }
 
-.summary-grid,
-.summary-split {
+.summary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.summary-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin-top: 16px;
 }
@@ -395,6 +401,11 @@ button:disabled {
   border-bottom: 1px solid rgba(22, 27, 34, 0.1);
 }
 
+.summary-card__total strong {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
 .summary-card--team {
   background: var(--soft-red);
   border-color: #efc4cb;
@@ -418,16 +429,12 @@ button:disabled {
   border-color: #bde6df;
 }
 
-.summary-split .summary-card--team {
-  min-height: 142px;
-}
-
 .summary-split .summary-card--team strong {
-  font-size: 27px;
+  font-size: 24px;
 }
 
 .summary-split .summary-card--school strong {
-  font-size: 24px;
+  font-size: 23px;
 }
 
 .summary-detail-list {
@@ -462,6 +469,16 @@ button:disabled {
   font-size: 14px;
   line-height: 1.35;
   text-align: right;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.form-row-hint {
+  grid-column: 1 / -1;
+  margin-top: -8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .metric-grid,

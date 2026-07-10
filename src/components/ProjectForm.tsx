@@ -85,9 +85,6 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
             onChange={(event) => onChange("previousReceipt", event.target.value)}
           />
           <FieldHint value={form.previousReceipt} />
-          <span className="field-hint">
-            该字段仅用于判断是否为首次到账，从而决定本次是否扣除成本；不参与阶梯比例切片。
-          </span>
         </label>
         <label>
           转化方式
@@ -102,6 +99,9 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
             ))}
           </select>
         </label>
+        <div className="form-row-hint">
+          该字段仅用于判断是否为首次到账，从而决定本次是否扣除成本；不参与阶梯比例切片。
+        </div>
         <label>
           是否山东省内实施
           <select
