@@ -287,6 +287,7 @@ export function exportPrintablePdf(form: FormState, result: CalculationResult): 
     <tbody>${tableRows(inventorRows)}${tableRows([["成果完成人部分合计（元）", "", "", formatMoney(result.inventorPart.researchFundTailAdjustmentCents), formatMoney(result.inventorPart.totalCents)]])}</tbody>
   </table>
   <p class="tail-note">尾差调整：${escapeHtml(formatMoney(result.tailAdjustmentCents))}，已计入成果完成人科研发展基金。</p>
+  <p class="tail-note">成本补偿说明：个人承担专利成本及个人承担费用补偿至个人；科研经费或发展基金支出补偿至成果完成人科研发展基金；补偿完成后再对本次可分配净收益按比例分配。</p>
 </body>
 </html>`;
 
@@ -320,6 +321,7 @@ export function buildCopyText(form: FormState, result: CalculationResult): strin
 
   lines.push("");
   lines.push(`尾差调整：${formatPlainMoney(result.tailAdjustmentCents)} 元，已计入成果完成人科研发展基金。`);
+  lines.push("成本补偿说明：个人承担专利成本及个人承担费用补偿至个人；科研经费或发展基金支出补偿至成果完成人科研发展基金；补偿完成后再对本次可分配净收益按比例分配。");
   lines.push(`说明：${SIMPLE_DISCLAIMER}`);
   return lines.join("\n");
 }

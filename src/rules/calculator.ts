@@ -219,6 +219,7 @@ function buildDisplayParts(
   costBreakdown: CostBreakdown,
   tailAdjustmentCents: number,
   isFirstReceipt: boolean,
+  includeCompensation = true,
 ) {
   const rowForFund = (key: FundKey): AllocationDisplayRow => ({
     key,
@@ -232,8 +233,9 @@ function buildDisplayParts(
   const schoolRows = [rowForFund("school"), rowForFund("special"), rowForFund("unit")];
   const schoolTotalCents = schoolRows.reduce((sum, row) => sum + row.finalCents, 0);
 
-  const researchFundCompensationCents = 0;
-  const personalCompensationCents = 0;
+  const researchFundCompensationCents = isFirstReceipt && includeCompensation ? costBreakdown.businessCents : 0;
+  const personalCompensationCents =
+    isFirstReceipt && includeCompensation ? costBreakdown.patentCents + costBreakdown.otherCents : 0;
   const inventorRows: AllocationDisplayRow[] = [
     rowForFund("team"),
     {
@@ -282,7 +284,15 @@ export function calculateDistribution(form: FormState): CalculationResult {
 
   if (!canCalculate) {
     const zeroTotals = cloneZeroFund();
-    const emptyParts = buildDisplayParts(zeroTotals, cloneZeroFund(), cloneZeroFund(), costBreakdown, 0, isFirstReceipt);
+    const emptyParts = buildDisplayParts(
+      zeroTotals,
+      cloneZeroFund(),
+      cloneZeroFund(),
+      costBreakdown,
+      0,
+      isFirstReceipt,
+      false,
+    );
     return {
       canCalculate,
       messages,

@@ -49,6 +49,10 @@ export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
         已确认口径：成本在第一次现金到账时集中扣除；后续到账默认不再重复扣除既有成本。
       </div>
 
+      <div className="notice notice--info">
+        成本补偿口径：个人承担专利成本及个人承担费用补偿至个人；科研经费或发展基金支出补偿至成果完成人科研发展基金。完成成本补偿后，再对本次可分配净收益按比例分配。
+      </div>
+
       {!isFirstReceipt && (
         <div className="notice notice--info">
           当前为后续进账。根据科研院确认口径，既有成本已在首次进账时集中扣除，本次默认不再扣除成本。
