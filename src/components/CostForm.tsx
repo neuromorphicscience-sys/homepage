@@ -8,12 +8,12 @@ interface CostFormProps {
 }
 
 const costLabels: Array<[keyof CostInputs, string]> = [
-  ["patent", "专利费用"],
-  ["business", "业务成本"],
-  ["tax", "税款"],
+  ["patent", "专利成本补偿"],
+  ["business", "科研经费或发展基金支出"],
+  ["tax", "税费"],
   ["evaluation", "评估费"],
   ["managerConsulting", "技术经理人咨询服务费"],
-  ["other", "其他开支"],
+  ["other", "个人承担费用"],
 ];
 
 export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
@@ -39,11 +39,11 @@ export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
           const hint = formatWan(costs[key]);
           return (
             <label key={key} className={!isFirstReceipt ? "is-disabled" : ""}>
-              {label}（万元）
+              {label}（元）
               <input
                 type="number"
                 min="0"
-                step="0.0001"
+                step="1"
                 value={costs[key]}
                 disabled={!isFirstReceipt}
                 onChange={(event) => onChange(key, event.target.value)}

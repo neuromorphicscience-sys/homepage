@@ -57,7 +57,31 @@ export interface FinalAllocationRow {
   name: string;
   originalCents: number;
   shandongAdjustmentCents: number;
+  tailAdjustmentCents: number;
   finalCents: number;
+}
+
+export interface AllocationDisplayRow {
+  key: string;
+  name: string;
+  originalCents: number;
+  shandongAdjustmentCents: number;
+  tailAdjustmentCents: number;
+  finalCents: number;
+}
+
+export interface SchoolPart {
+  rows: AllocationDisplayRow[];
+  totalCents: number;
+}
+
+export interface InventorPart {
+  rows: AllocationDisplayRow[];
+  rewardCents: number;
+  researchFundCompensationCents: number;
+  personalCompensationCents: number;
+  researchFundTailAdjustmentCents: number;
+  totalCents: number;
 }
 
 export interface CostBreakdown {
@@ -85,6 +109,8 @@ export interface CalculationResult {
   shandongAdjustmentsCents: Record<FundKey, number>;
   finalTotalsCents: Record<FundKey, number>;
   tailAdjustmentCents: number;
+  schoolPart: SchoolPart;
+  inventorPart: InventorPart;
   slices: SliceResult[];
   finalRows: FinalAllocationRow[];
   methodNotice: string | null;

@@ -1,6 +1,5 @@
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import type { CalculationResult } from "../types";
-import { FUND_NAMES } from "../rules/policyRules";
 import { formatMoney } from "../utils/money";
 
 interface ResultSummaryProps {
@@ -8,13 +7,6 @@ interface ResultSummaryProps {
 }
 
 export function ResultSummary({ result }: ResultSummaryProps) {
-  const cards = [
-    ["team", FUND_NAMES.team, result.finalTotalsCents.team],
-    ["unit", FUND_NAMES.unit, result.finalTotalsCents.unit],
-    ["school", FUND_NAMES.school, result.finalTotalsCents.school],
-    ["special", FUND_NAMES.special, result.finalTotalsCents.special],
-  ] as const;
-
   return (
     <section className="panel result-panel print-block" id="result">
       <div className="section-heading">
@@ -36,38 +28,40 @@ export function ResultSummary({ result }: ResultSummaryProps) {
       )}
 
       {!result.canCalculate && (
-        <div className="empty-state">当前存在阻断项，暂不生成现金分配结果。请调整输入后继续测算。</div>
+        <div className="empty-state">当前存在阻断项，暂不生成现金收入分配测算结果。请调整输入后继续测算。</div>
       )}
 
-      <div className="summary-grid">
-        {cards.map(([key, label, value]) => (
-          <article className={`summary-card summary-card--${key}`} key={key}>
-            <span>{label}</span>
-            <strong>{formatMoney(value)}</strong>
-          </article>
-        ))}
+      <div className="summary-split">
+        <article className="summary-card summary-card--team">
+          <span>成果完成人部分合计（元）</span>
+          <strong>{formatMoney(result.inventorPart.totalCents)}</strong>
+        </article>
+        <article className="summary-card summary-card--school">
+          <span>学校部分合计（元）</span>
+          <strong>{formatMoney(result.schoolPart.totalCents)}</strong>
+        </article>
       </div>
 
       <div className="metric-grid">
         <div>
-          <span>本次到账金额</span>
+          <span>本次到账现金（元）</span>
           <strong>{formatMoney(result.inputsCents.currentReceiptCents)}</strong>
         </div>
         <div>
-          <span>本次成本合计</span>
+          <span>本次成本合计（元）</span>
           <strong>{formatMoney(result.costBreakdown.totalCostCents)}</strong>
         </div>
         <div>
-          <span>本次可分配净收益</span>
+          <span>本次可分配净收益（元）</span>
           <strong>{formatMoney(result.costBreakdown.distributableNetIncomeCents)}</strong>
-        </div>
-        <div>
-          <span>山东省内奖励修正</span>
-          <strong>{result.shandongAdjustmentsCents.team > 0 ? "是" : "否"}</strong>
         </div>
         <div>
           <span>本次是否首次进账</span>
           <strong>{result.isFirstReceipt ? "是" : "否"}</strong>
+        </div>
+        <div>
+          <span>是否山东省内实施</span>
+          <strong>{result.shandongAdjustmentsCents.team > 0 ? "是" : "否"}</strong>
         </div>
       </div>
     </section>

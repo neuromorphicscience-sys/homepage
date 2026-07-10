@@ -5,11 +5,13 @@ const ONE_MILLION_CENTS = 1_000_000 * 100;
 export const DISCLAIMER =
   "本系统为山东大学科技成果转化收入分配测算工具，计算结果仅供成果负责人、二级单位、科研院和财务部复核参考，正式分配以学校审核意见和财务入账结果为准。";
 
+export const SIMPLE_DISCLAIMER = "本计算器仅用于成果转化收入分配测算，正式分配结果以学校审核意见和财务入账结果为准。";
+
 export const POLICY_VERSION = "山大规字〔2026〕2号";
 
 export const FUND_NAMES: Record<FundKey, string> = {
-  team: "成果完成人团队",
-  unit: "二级单位",
+  team: "奖励成果完成人收益",
+  unit: "二级单位科研发展基金",
   school: "学校基金",
   special: "科技成果转化专项基金",
 };

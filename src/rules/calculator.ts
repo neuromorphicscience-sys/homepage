@@ -1,5 +1,6 @@
 import type {
   CalculationResult,
+  AllocationDisplayRow,
   CostBreakdown,
   FinalAllocationRow,
   FormState,
@@ -8,7 +9,7 @@ import type {
   ValidationMessage,
 } from "../types";
 import { FUND_NAMES, getTierRules } from "./policyRules";
-import { allocateByBasisPoints, parseWanYuanToCents, prorateCents } from "../utils/money";
+import { allocateByBasisPoints, parseYuanToCents, prorateCents } from "../utils/money";
 
 const ZERO_BY_FUND: Record<FundKey, number> = {
   team: 0,
@@ -31,12 +32,12 @@ function cloneZeroFund(): Record<FundKey, number> {
 }
 
 function buildCostBreakdown(form: FormState, isFirstReceipt: boolean, currentReceiptCents: number): CostBreakdown {
-  const patentCents = parseWanYuanToCents(form.costs.patent);
-  const businessCents = parseWanYuanToCents(form.costs.business);
-  const taxCents = parseWanYuanToCents(form.costs.tax);
-  const evaluationCents = parseWanYuanToCents(form.costs.evaluation);
-  const managerConsultingCents = parseWanYuanToCents(form.costs.managerConsulting);
-  const otherCents = parseWanYuanToCents(form.costs.other);
+  const patentCents = parseYuanToCents(form.costs.patent);
+  const businessCents = parseYuanToCents(form.costs.business);
+  const taxCents = parseYuanToCents(form.costs.tax);
+  const evaluationCents = parseYuanToCents(form.costs.evaluation);
+  const managerConsultingCents = parseYuanToCents(form.costs.managerConsulting);
+  const otherCents = parseYuanToCents(form.costs.other);
   const enteredCostCents =
     patentCents + businessCents + taxCents + evaluationCents + managerConsultingCents + otherCents;
   const totalCostCents = isFirstReceipt ? enteredCostCents : 0;
@@ -55,9 +56,9 @@ function buildCostBreakdown(form: FormState, isFirstReceipt: boolean, currentRec
 
 function validate(form: FormState, costBreakdown: CostBreakdown): ValidationMessage[] {
   const messages: ValidationMessage[] = [];
-  const contractAmountCents = parseWanYuanToCents(form.contractAmount);
-  const currentReceiptCents = parseWanYuanToCents(form.currentReceipt);
-  const previousReceiptCents = parseWanYuanToCents(form.previousReceipt);
+  const contractAmountCents = parseYuanToCents(form.contractAmount);
+  const currentReceiptCents = parseYuanToCents(form.currentReceipt);
+  const previousReceiptCents = parseYuanToCents(form.previousReceipt);
   const isFirstReceipt = previousReceiptCents === 0;
 
   if (contractAmountCents <= 0) {
@@ -65,7 +66,7 @@ function validate(form: FormState, costBreakdown: CostBreakdown): ValidationMess
   }
 
   if (currentReceiptCents <= 0 && form.transformationMethod !== "equity_equity") {
-    messages.push({ type: "error", message: "本次到账金额必须大于 0。" });
+    messages.push({ type: "error", message: "本次到账现金必须大于 0。" });
   }
 
   if (previousReceiptCents < 0) {
@@ -75,12 +76,12 @@ function validate(form: FormState, costBreakdown: CostBreakdown): ValidationMess
   if (previousReceiptCents + currentReceiptCents > contractAmountCents && contractAmountCents > 0) {
     messages.push({
       type: "warning",
-      message: "本次前累计到账金额 + 本次到账金额已超过合同总金额，请复核合同金额、分期到账和登记口径。",
+      message: "本次前累计到账金额 + 本次到账现金已超过合同总金额，请复核合同金额、分期到账和登记口径。",
     });
   }
 
   for (const field of COST_FIELDS) {
-    if (parseWanYuanToCents(form.costs[field]) < 0) {
+    if (parseYuanToCents(form.costs[field]) < 0) {
       messages.push({ type: "error", message: "成本项不能小于 0。" });
       break;
     }
@@ -89,7 +90,7 @@ function validate(form: FormState, costBreakdown: CostBreakdown): ValidationMess
   if (isFirstReceipt && costBreakdown.totalCostCents > currentReceiptCents) {
     messages.push({
       type: "error",
-      message: "首次进账成本合计超过本次到账金额，请科研院和财务部确认是否结转至后续到账或调整成本扣除口径。",
+      message: "首次进账成本合计超过本次到账现金，请科研院和财务部确认是否结转至后续到账或调整成本扣除口径。",
     });
   }
 
@@ -188,12 +189,14 @@ function buildFinalRows(
   originalTotalsCents: Record<FundKey, number>,
   adjustmentsCents: Record<FundKey, number>,
   finalTotalsCents: Record<FundKey, number>,
+  tailAdjustmentCents = 0,
 ): FinalAllocationRow[] {
   const rows: FinalAllocationRow[] = (Object.keys(originalTotalsCents) as FundKey[]).map((key) => ({
     key,
     name: FUND_NAMES[key],
     originalCents: originalTotalsCents[key],
     shandongAdjustmentCents: adjustmentsCents[key],
+    tailAdjustmentCents: 0,
     finalCents: finalTotalsCents[key],
   }));
 
@@ -202,16 +205,75 @@ function buildFinalRows(
     name: "合计",
     originalCents: rows.reduce((sum, row) => sum + row.originalCents, 0),
     shandongAdjustmentCents: rows.reduce((sum, row) => sum + row.shandongAdjustmentCents, 0),
+    tailAdjustmentCents,
     finalCents: rows.reduce((sum, row) => sum + row.finalCents, 0),
   });
 
   return rows;
 }
 
+function buildDisplayParts(
+  originalTotalsCents: Record<FundKey, number>,
+  adjustmentsCents: Record<FundKey, number>,
+  finalTotalsCents: Record<FundKey, number>,
+  costBreakdown: CostBreakdown,
+  tailAdjustmentCents: number,
+  isFirstReceipt: boolean,
+) {
+  const rowForFund = (key: FundKey): AllocationDisplayRow => ({
+    key,
+    name: FUND_NAMES[key],
+    originalCents: originalTotalsCents[key],
+    shandongAdjustmentCents: adjustmentsCents[key],
+    tailAdjustmentCents: 0,
+    finalCents: finalTotalsCents[key],
+  });
+
+  const schoolRows = [rowForFund("school"), rowForFund("special"), rowForFund("unit")];
+  const schoolTotalCents = schoolRows.reduce((sum, row) => sum + row.finalCents, 0);
+
+  const researchFundCompensationCents = 0;
+  const personalCompensationCents = 0;
+  const inventorRows: AllocationDisplayRow[] = [
+    rowForFund("team"),
+    {
+      key: "researchFundCompensation",
+      name: "成本补偿至成果完成人科研发展基金（元）",
+      originalCents: researchFundCompensationCents,
+      shandongAdjustmentCents: 0,
+      tailAdjustmentCents,
+      finalCents: researchFundCompensationCents + tailAdjustmentCents,
+    },
+    {
+      key: "personalCompensation",
+      name: "成本补偿至个人（元）",
+      originalCents: personalCompensationCents,
+      shandongAdjustmentCents: 0,
+      tailAdjustmentCents: 0,
+      finalCents: personalCompensationCents,
+    },
+  ];
+
+  return {
+    schoolPart: {
+      rows: schoolRows,
+      totalCents: schoolTotalCents,
+    },
+    inventorPart: {
+      rows: inventorRows,
+      rewardCents: finalTotalsCents.team,
+      researchFundCompensationCents,
+      personalCompensationCents,
+      researchFundTailAdjustmentCents: tailAdjustmentCents,
+      totalCents: inventorRows.reduce((sum, row) => sum + row.finalCents, 0),
+    },
+  };
+}
+
 export function calculateDistribution(form: FormState): CalculationResult {
-  const contractAmountCents = parseWanYuanToCents(form.contractAmount);
-  const currentReceiptCents = parseWanYuanToCents(form.currentReceipt);
-  const previousReceiptCents = parseWanYuanToCents(form.previousReceipt);
+  const contractAmountCents = parseYuanToCents(form.contractAmount);
+  const currentReceiptCents = parseYuanToCents(form.currentReceipt);
+  const previousReceiptCents = parseYuanToCents(form.previousReceipt);
   const isFirstReceipt = previousReceiptCents === 0;
   const costBreakdown = buildCostBreakdown(form, isFirstReceipt, currentReceiptCents);
   const messages = validate(form, costBreakdown);
@@ -220,6 +282,7 @@ export function calculateDistribution(form: FormState): CalculationResult {
 
   if (!canCalculate) {
     const zeroTotals = cloneZeroFund();
+    const emptyParts = buildDisplayParts(zeroTotals, cloneZeroFund(), cloneZeroFund(), costBreakdown, 0, isFirstReceipt);
     return {
       canCalculate,
       messages,
@@ -229,6 +292,7 @@ export function calculateDistribution(form: FormState): CalculationResult {
       shandongAdjustmentsCents: cloneZeroFund(),
       finalTotalsCents: cloneZeroFund(),
       tailAdjustmentCents: 0,
+      ...emptyParts,
       slices: [],
       finalRows: buildFinalRows(zeroTotals, cloneZeroFund(), cloneZeroFund()),
       methodNotice,
@@ -250,10 +314,17 @@ export function calculateDistribution(form: FormState): CalculationResult {
   }
 
   // Rounding can introduce a few cents of drift across slices and adjustments.
-  // The confirmed first-version rule places that tail difference in the special fund.
+  // The second-version rule places that tail difference in the inventor research development fund.
   const finalTotalBeforeTail = Object.values(finalTotalsCents).reduce((sum, value) => sum + value, 0);
   const tailAdjustmentCents = costBreakdown.distributableNetIncomeCents - finalTotalBeforeTail;
-  finalTotalsCents.special += tailAdjustmentCents;
+  const displayParts = buildDisplayParts(
+    originalTotalsCents,
+    shandongAdjustmentsCents,
+    finalTotalsCents,
+    costBreakdown,
+    tailAdjustmentCents,
+    isFirstReceipt,
+  );
 
   return {
     canCalculate,
@@ -264,8 +335,9 @@ export function calculateDistribution(form: FormState): CalculationResult {
     shandongAdjustmentsCents,
     finalTotalsCents,
     tailAdjustmentCents,
+    ...displayParts,
     slices,
-    finalRows: buildFinalRows(originalTotalsCents, shandongAdjustmentsCents, finalTotalsCents),
+    finalRows: buildFinalRows(originalTotalsCents, shandongAdjustmentsCents, finalTotalsCents, tailAdjustmentCents),
     methodNotice,
     inputsCents: {
       contractAmountCents,

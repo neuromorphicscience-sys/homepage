@@ -1,16 +1,13 @@
 import { Calculator, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
-import { ConfirmQuestions } from "./components/ConfirmQuestions";
-import { ConfirmedRules } from "./components/ConfirmedRules";
 import { CostForm } from "./components/CostForm";
 import { ExportButtons } from "./components/ExportButtons";
 import { Header } from "./components/Header";
-import { PolicyNotes } from "./components/PolicyNotes";
 import { ProjectForm } from "./components/ProjectForm";
 import { ResultSummary } from "./components/ResultSummary";
 import { ResultTables } from "./components/ResultTables";
 import { calculateDistribution } from "./rules/calculator";
-import { DISCLAIMER, POLICY_VERSION } from "./rules/policyRules";
+import { POLICY_VERSION } from "./rules/policyRules";
 import type { CostInputs, FormState } from "./types";
 
 const emptyCosts: CostInputs = {
@@ -48,18 +45,18 @@ const firstReceiptExample: FormState = {
   leader: "张老师",
   department: "信息科学与工程学院",
   transferee: "山东示范科技有限公司",
-  contractAmount: "1500",
-  currentReceipt: "1500",
+  contractAmount: "15000000",
+  currentReceipt: "15000000",
   previousReceipt: "0",
   transformationMethod: "license",
   inShandong: true,
   installment: false,
   costs: {
-    patent: "20",
-    business: "30",
-    tax: "30",
-    evaluation: "10",
-    managerConsulting: "10",
+    patent: "200000",
+    business: "300000",
+    tax: "300000",
+    evaluation: "100000",
+    managerConsulting: "100000",
     other: "0",
   },
 };
@@ -72,18 +69,18 @@ const followUpExample: FormState = {
   leader: "张老师",
   department: "信息科学与工程学院",
   transferee: "山东示范科技有限公司",
-  contractAmount: "1500",
-  currentReceipt: "300",
-  previousReceipt: "500",
+  contractAmount: "15000000",
+  currentReceipt: "3000000",
+  previousReceipt: "5000000",
   transformationMethod: "license",
   inShandong: true,
   installment: true,
   costs: {
-    patent: "20",
-    business: "30",
-    tax: "30",
-    evaluation: "10",
-    managerConsulting: "10",
+    patent: "200000",
+    business: "300000",
+    tax: "300000",
+    evaluation: "100000",
+    managerConsulting: "100000",
     other: "0",
   },
 };
@@ -160,16 +157,11 @@ function App() {
 
         <ResultTables form={form} result={result} />
 
-        <div className="bottom-grid no-print">
-          <PolicyNotes />
-          <ConfirmedRules />
-          <ConfirmQuestions />
-        </div>
       </main>
 
       <footer className="site-footer print-block">
         <strong>免责声明</strong>
-        <span>{DISCLAIMER}</span>
+        <span>本计算器仅用于成果转化收入分配测算，正式分配结果以学校审核意见和财务入账结果为准。</span>
       </footer>
     </div>
   );
