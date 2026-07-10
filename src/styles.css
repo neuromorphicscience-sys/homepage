@@ -393,7 +393,8 @@ button:disabled {
   color: var(--ink);
   font-size: 22px;
   line-height: 1.2;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .summary-card__total {
@@ -403,8 +404,10 @@ button:disabled {
 
 .summary-card__total strong {
   max-width: 100%;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .summary-card--team {
@@ -446,9 +449,8 @@ button:disabled {
 
 .summary-detail-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  align-items: baseline;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
   padding: 8px 0;
   border-bottom: 1px dashed rgba(22, 27, 34, 0.12);
 }
@@ -470,9 +472,10 @@ button:disabled {
   color: var(--ink);
   font-size: 14px;
   line-height: 1.35;
-  text-align: right;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-x: auto;
+  text-align: left;
+  white-space: nowrap;
+  word-break: normal;
 }
 
 .form-row-hint {
@@ -514,7 +517,10 @@ button:disabled {
 .info-grid strong {
   color: var(--ink);
   font-size: 15px;
-  overflow-wrap: anywhere;
+  overflow-x: auto;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  word-break: normal;
 }
 
 .notice {
@@ -681,7 +687,11 @@ tr.table-emphasis td {
 .part-total strong {
   color: var(--sdu-red-dark);
   font-size: 22px;
-  overflow-wrap: anywhere;
+  overflow-x: auto;
+  overflow-wrap: normal;
+  text-align: left;
+  white-space: nowrap;
+  word-break: normal;
 }
 
 .part-total--primary {
