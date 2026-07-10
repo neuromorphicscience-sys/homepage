@@ -33,12 +33,32 @@ export function ResultSummary({ result }: ResultSummaryProps) {
 
       <div className="summary-split">
         <article className="summary-card summary-card--team">
-          <span>成果完成人部分合计（元）</span>
-          <strong>{formatMoney(result.inventorPart.totalCents)}</strong>
+          <div className="summary-card__total">
+            <span>成果完成人部分合计（元）</span>
+            <strong>{formatMoney(result.inventorPart.totalCents)}</strong>
+          </div>
+          <div className="summary-detail-list" aria-label="成果完成人部分明细">
+            {result.inventorPart.rows.map((row) => (
+              <div className="summary-detail-row" key={row.key}>
+                <span>{row.name}</span>
+                <strong>{formatMoney(row.finalCents)}</strong>
+              </div>
+            ))}
+          </div>
         </article>
         <article className="summary-card summary-card--school">
-          <span>学校部分合计（元）</span>
-          <strong>{formatMoney(result.schoolPart.totalCents)}</strong>
+          <div className="summary-card__total">
+            <span>学校部分合计（元）</span>
+            <strong>{formatMoney(result.schoolPart.totalCents)}</strong>
+          </div>
+          <div className="summary-detail-list" aria-label="学校部分明细">
+            {result.schoolPart.rows.map((row) => (
+              <div className="summary-detail-row" key={row.key}>
+                <span>{row.name}</span>
+                <strong>{formatMoney(row.finalCents)}</strong>
+              </div>
+            ))}
+          </div>
         </article>
       </div>
 
