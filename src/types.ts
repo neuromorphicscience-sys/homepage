@@ -48,7 +48,10 @@ export interface SliceResult {
   contractSliceRatio: number;
   tierNetIncomeCents: number;
   rates: Record<FundKey, number>;
+  effectiveRates: Record<FundKey, number>;
   originalAmountsCents: Record<FundKey, number>;
+  shandongAdjustmentAmountsCents: Record<FundKey, number>;
+  finalAmountsCents: Record<FundKey, number>;
 }
 
 export interface FinalAllocationRow {
@@ -85,6 +88,7 @@ export interface InventorPart {
 
 export interface CostBreakdown {
   patentCents: number;
+  patentDeductionCents: number;
   businessCents: number;
   taxCents: number;
   evaluationCents: number;

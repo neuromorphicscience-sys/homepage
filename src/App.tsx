@@ -152,14 +152,9 @@ function App() {
           </aside>
         </div>
 
-        <ResultTables form={form} result={result} />
+        <ResultTables result={result} />
 
       </main>
-
-      <footer className="site-footer print-block">
-        <strong>免责声明</strong>
-        <span>本计算器仅用于成果转化收入分配测算，正式分配结果以学校审核意见和财务入账结果为准。</span>
-      </footer>
     </div>
   );
 }

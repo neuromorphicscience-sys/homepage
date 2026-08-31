@@ -1,6 +1,6 @@
-import { ClipboardCopy, Download, FileJson, Printer } from "lucide-react";
+import { ClipboardCopy, FileSpreadsheet, Printer } from "lucide-react";
 import type { CalculationResult, FormState } from "../types";
-import { copyResultText, exportCsv, exportJson, exportPrintablePdf } from "../utils/export";
+import { copyResultText, exportExcel, exportPrintablePdf } from "../utils/export";
 
 interface ExportButtonsProps {
   form: FormState;
@@ -22,19 +22,19 @@ export function ExportButtons({ form, result, onStatus }: ExportButtonsProps) {
 
   const printPdf = () => {
     try {
-      exportPrintablePdf(form, result);
+      exportPrintablePdf(result);
       onStatus("已打开打印版页面，请在打印窗口中选择“另存为 PDF”。");
     } catch {
       onStatus("打印版页面打开失败，请检查浏览器弹窗拦截设置。");
     }
   };
 
-  const downloadCsv = () => {
+  const downloadExcel = async () => {
     try {
-      exportCsv(result);
-      onStatus("CSV 文件已开始下载。");
+      await exportExcel(result);
+      onStatus("Excel 文件已开始下载。");
     } catch {
-      onStatus("CSV 导出失败，请稍后重试或更换浏览器。");
+      onStatus("Excel 导出失败，请稍后重试或更换浏览器。");
     }
   };
 
@@ -44,13 +44,9 @@ export function ExportButtons({ form, result, onStatus }: ExportButtonsProps) {
         <Printer size={18} />
         打印 / 导出 PDF
       </button>
-      <button type="button" onClick={() => exportJson(form, result)} disabled={disabled} title="导出 JSON">
-        <FileJson size={18} />
-        导出 JSON
-      </button>
-      <button type="button" onClick={downloadCsv} disabled={disabled} title="导出 CSV">
-        <Download size={18} />
-        导出 CSV
+      <button type="button" onClick={downloadExcel} disabled={disabled} title="导出 Excel">
+        <FileSpreadsheet size={18} />
+        导出 Excel
       </button>
       <button type="button" onClick={copy} disabled={disabled} title="复制结果">
         <ClipboardCopy size={18} />

@@ -497,6 +497,56 @@ button:disabled {
   margin-top: 14px;
 }
 
+.result-details {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfd;
+  overflow: hidden;
+}
+
+.result-details summary {
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+  padding: 13px 42px 13px 14px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.result-details summary::-webkit-details-marker,
+.collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+
+.result-details summary::after,
+.collapsible-summary::after {
+  content: "⌄";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  color: var(--muted);
+  font-size: 20px;
+  line-height: 1;
+  transform: translateY(-58%);
+  transition: transform 0.18s ease;
+}
+
+.result-details[open] summary::after,
+.collapsible-panel[open] > .collapsible-summary::after {
+  transform: translateY(-42%) rotate(180deg);
+}
+
+.result-details[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.result-details .metric-grid {
+  margin: 0;
+  padding: 14px;
+}
+
 .metric-grid div,
 .info-grid div {
   border: 1px solid var(--line);
@@ -596,6 +646,46 @@ button:disabled {
   margin-left: auto;
 }
 
+.collapsible-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.collapsible-summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+  cursor: pointer;
+  list-style: none;
+  padding: 16px 52px 16px 20px;
+}
+
+.collapsible-summary span {
+  color: var(--sdu-red);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.collapsible-summary h3 {
+  margin: 0 0 0 auto;
+  font-size: 20px;
+}
+
+.collapsible-summary--single h3 {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.collapsible-panel[open] > .collapsible-summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.collapsible-content {
+  padding: 18px 20px 20px;
+}
+
 .table-wrap {
   width: 100%;
   max-width: 100%;
@@ -659,7 +749,7 @@ tr.table-emphasis td {
 }
 
 .allocation-section--school {
-  border-top-color: var(--gold);
+  border-top-color: var(--sdu-red);
 }
 
 .allocation-section--inventor {
@@ -759,6 +849,17 @@ tr.table-emphasis td {
     gap: 6px;
   }
 
+  .collapsible-summary {
+    align-items: flex-start;
+    flex-direction: column-reverse;
+    gap: 5px;
+  }
+
+  .collapsible-summary h3,
+  .collapsible-summary--single h3 {
+    margin: 0;
+  }
+
   .action-row {
     align-items: flex-start;
   }
@@ -839,6 +940,20 @@ tr.table-emphasis td {
     box-shadow: none;
     margin-bottom: 12px;
     padding: 12px;
+  }
+
+  .collapsible-panel {
+    break-inside: auto;
+  }
+
+  .collapsible-summary::after,
+  .result-details summary::after {
+    display: none;
+  }
+
+  .collapsible-content,
+  .result-details .metric-grid {
+    display: block !important;
   }
 
   .tables-stack {

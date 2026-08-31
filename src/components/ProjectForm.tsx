@@ -24,7 +24,6 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
   return (
     <section className="panel">
       <div className="section-heading">
-        <span>模块 1</span>
         <h2>项目基本信息</h2>
       </div>
 
@@ -34,11 +33,11 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
           <input value={form.achievementName} onChange={(event) => onChange("achievementName", event.target.value)} />
         </label>
         <label>
-          合同编号
+          审批表编号
           <input value={form.contractNo} onChange={(event) => onChange("contractNo", event.target.value)} />
         </label>
         <label>
-          技术合同登记编号
+          技术合同登记号（选填）
           <input value={form.registrationNo} onChange={(event) => onChange("registrationNo", event.target.value)} />
         </label>
         <label>

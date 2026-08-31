@@ -8,8 +8,8 @@ interface CostFormProps {
 }
 
 const patentCostLabels: Array<[keyof CostInputs, string]> = [
-  ["patent", "个人承担专利成本"],
-  ["business", "科研经费或发展基金支出"],
+  ["business", "科研经费及发展基金支出"],
+  ["patent", "个人承担专利费用"],
 ];
 
 const costLabels: Array<[keyof CostInputs, string]> = [
@@ -40,26 +40,25 @@ export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
   return (
     <section className={`panel ${!isFirstReceipt ? "panel--muted" : ""}`}>
       <div className="section-heading">
-        <span>模块 2</span>
         <h2>成本扣除信息</h2>
       </div>
 
       <div className="notice notice--info">
-        已确认口径：成本在第一次现金到账时集中扣除；后续到账默认不再重复扣除既有成本。
+        成本应在首次现金到账时一次性集中扣除；后续到账不再重复扣除已扣除的成本。
       </div>
 
       <div className="notice notice--info">
-        成本补偿口径：个人承担专利成本补偿至个人；科研经费或发展基金支出补偿至成果完成人科研发展基金；其他成本仅作成本扣除。完成成本补偿后，再对本次可分配净收益按比例分配。
+        个人承担的专利费用按照实际发生额的两倍计入成本扣除，其中双倍扣除额的 50% 补偿至发明人个人，50% 补偿至发明人科研发展基金；科研经费及发展基金支出补偿至成果完成人科研发展基金；税费、评估费及其他成本仅作成本扣除，不予补偿。完成成本扣除及补偿后，剩余净收益按照规定比例分配。
       </div>
 
       {!isFirstReceipt && (
         <div className="notice notice--info">
-          当前为后续进账。根据科研院确认口径，既有成本已在首次进账时集中扣除，本次默认不再扣除成本。
+          当前为后续到账。本项目成本已于首次到账时集中扣除，本次到账不再重复扣除。
         </div>
       )}
 
       <fieldset className="cost-fieldset">
-        <legend>专利成本补偿</legend>
+        <legend>专利费用及科研经费补偿</legend>
         <div className="form-grid form-grid--compact">{patentCostLabels.map(renderCostField)}</div>
       </fieldset>
 

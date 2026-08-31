@@ -8,7 +8,7 @@ import type {
   SliceResult,
   ValidationMessage,
 } from "../types";
-import { FUND_NAMES, getTierRules } from "./policyRules";
+import { FUND_NAMES, SHANDONG_RATE_ADJUSTMENTS, getTierRules } from "./policyRules";
 import { allocateByBasisPoints, parseYuanToCents, prorateCents } from "../utils/money";
 
 const ZERO_BY_FUND: Record<FundKey, number> = {
@@ -36,11 +36,13 @@ function buildCostBreakdown(form: FormState, isFirstReceipt: boolean, currentRec
   const taxCents = parseYuanToCents(form.costs.tax);
   const evaluationCents = parseYuanToCents(form.costs.evaluation);
   const otherCostCents = parseYuanToCents(form.costs.other);
-  const enteredCostCents = patentCents + businessCents + taxCents + evaluationCents + otherCostCents;
+  const patentDeductionCents = patentCents * 2;
+  const enteredCostCents = patentDeductionCents + businessCents + taxCents + evaluationCents + otherCostCents;
   const totalCostCents = isFirstReceipt ? enteredCostCents : 0;
 
   return {
     patentCents,
+    patentDeductionCents,
     businessCents,
     taxCents,
     evaluationCents,
@@ -143,8 +145,15 @@ function calculateSlices(
     const tierNetIncomeCents = prorateCents(netIncomeCents, contractSliceAmountCents, contractAmountCents);
 
     const originalAmountsCents = cloneZeroFund();
+    const shandongAdjustmentAmountsCents = cloneZeroFund();
+    const effectiveRates = cloneZeroFund();
+    const finalAmountsCents = cloneZeroFund();
     for (const key of Object.keys(originalAmountsCents) as FundKey[]) {
       originalAmountsCents[key] = allocateByBasisPoints(tierNetIncomeCents, tier.rates[key]);
+      const adjustmentRate = form.inShandong ? SHANDONG_RATE_ADJUSTMENTS[key] : 0;
+      effectiveRates[key] = tier.rates[key] + adjustmentRate;
+      shandongAdjustmentAmountsCents[key] = allocateByBasisPoints(tierNetIncomeCents, adjustmentRate);
+      finalAmountsCents[key] = originalAmountsCents[key] + shandongAdjustmentAmountsCents[key];
     }
 
     slices.push({
@@ -154,8 +163,25 @@ function calculateSlices(
       contractSliceRatio: contractSliceAmountCents / contractAmountCents,
       tierNetIncomeCents,
       rates: tier.rates,
+      effectiveRates,
       originalAmountsCents,
+      shandongAdjustmentAmountsCents,
+      finalAmountsCents,
     });
+  }
+
+  if (slices.length > 0 && form.inShandong) {
+    const lastSlice = slices[slices.length - 1];
+    for (const key of Object.keys(SHANDONG_RATE_ADJUSTMENTS) as FundKey[]) {
+      const targetAdjustmentCents = allocateByBasisPoints(netIncomeCents, SHANDONG_RATE_ADJUSTMENTS[key]);
+      const calculatedAdjustmentCents = slices.reduce(
+        (sum, slice) => sum + slice.shandongAdjustmentAmountsCents[key],
+        0,
+      );
+      const roundingDifferenceCents = targetAdjustmentCents - calculatedAdjustmentCents;
+      lastSlice.shandongAdjustmentAmountsCents[key] += roundingDifferenceCents;
+      lastSlice.finalAmountsCents[key] += roundingDifferenceCents;
+    }
   }
 
   return slices;
@@ -171,14 +197,14 @@ function sumOriginalTotals(slices: SliceResult[]): Record<FundKey, number> {
   return totals;
 }
 
-function calculateShandongAdjustments(netIncomeCents: number, enabled: boolean): Record<FundKey, number> {
-  if (!enabled) return cloneZeroFund();
-  return {
-    team: allocateByBasisPoints(netIncomeCents, 200),
-    unit: -allocateByBasisPoints(netIncomeCents, 100),
-    school: -allocateByBasisPoints(netIncomeCents, 50),
-    special: -allocateByBasisPoints(netIncomeCents, 50),
-  };
+function sumShandongAdjustments(slices: SliceResult[]): Record<FundKey, number> {
+  const totals = cloneZeroFund();
+  for (const slice of slices) {
+    for (const key of Object.keys(totals) as FundKey[]) {
+      totals[key] += slice.shandongAdjustmentAmountsCents[key];
+    }
+  }
+  return totals;
 }
 
 function buildFinalRows(
@@ -229,7 +255,9 @@ function buildDisplayParts(
   const schoolRows = [rowForFund("school"), rowForFund("special"), rowForFund("unit")];
   const schoolTotalCents = schoolRows.reduce((sum, row) => sum + row.finalCents, 0);
 
-  const researchFundCompensationCents = isFirstReceipt && includeCompensation ? costBreakdown.businessCents : 0;
+  const researchFundCompensationCents = isFirstReceipt && includeCompensation
+    ? costBreakdown.patentCents + costBreakdown.businessCents
+    : 0;
   const personalCompensationCents = isFirstReceipt && includeCompensation ? costBreakdown.patentCents : 0;
   const inventorRows: AllocationDisplayRow[] = [
     rowForFund("team"),
@@ -311,7 +339,7 @@ export function calculateDistribution(form: FormState): CalculationResult {
 
   const slices = calculateSlices(form, contractAmountCents, costBreakdown.distributableNetIncomeCents);
   const originalTotalsCents = sumOriginalTotals(slices);
-  const shandongAdjustmentsCents = calculateShandongAdjustments(costBreakdown.distributableNetIncomeCents, form.inShandong);
+  const shandongAdjustmentsCents = sumShandongAdjustments(slices);
   const finalTotalsCents = cloneZeroFund();
 
   for (const key of Object.keys(finalTotalsCents) as FundKey[]) {
