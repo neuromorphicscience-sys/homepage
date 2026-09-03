@@ -11,7 +11,7 @@ export function ResultSummary({ result }: ResultSummaryProps) {
     <section className="panel result-panel print-block" id="result">
       <div className="section-heading">
         <span>模块 3</span>
-        <h2>测算依据概况</h2>
+        <h2>测算结果</h2>
       </div>
 
       {result.methodNotice && <div className="notice notice--info">{result.methodNotice}</div>}
@@ -28,7 +28,7 @@ export function ResultSummary({ result }: ResultSummaryProps) {
       )}
 
       {!result.canCalculate && (
-        <div className="empty-state">当前存在阻断项，暂不生成现金收入分配测算结果。请调整输入后继续测算。</div>
+        <div className="empty-state">合同金额应大于或等于到账金额。如未生成测算结果，请调整后重新测算。</div>
       )}
 
       <div className="summary-split">
@@ -62,28 +62,31 @@ export function ResultSummary({ result }: ResultSummaryProps) {
         </article>
       </div>
 
-      <div className="metric-grid">
-        <div>
-          <span>本次到账现金（元）</span>
-          <strong>{formatMoney(result.inputsCents.currentReceiptCents)}</strong>
+      <details className="result-details">
+        <summary>测算依据概况</summary>
+        <div className="metric-grid">
+          <div>
+            <span>本次到账现金（元）</span>
+            <strong>{formatMoney(result.inputsCents.currentReceiptCents)}</strong>
+          </div>
+          <div>
+            <span>本次成本扣除合计（元）</span>
+            <strong>{formatMoney(result.costBreakdown.totalCostCents)}</strong>
+          </div>
+          <div>
+            <span>本次可分配净收益（元）</span>
+            <strong>{formatMoney(result.costBreakdown.distributableNetIncomeCents)}</strong>
+          </div>
+          <div>
+            <span>本次是否首次进账</span>
+            <strong>{result.isFirstReceipt ? "是" : "否"}</strong>
+          </div>
+          <div>
+            <span>是否山东省内实施</span>
+            <strong>{result.inShandong ? "是" : "否"}</strong>
+          </div>
         </div>
-        <div>
-          <span>本次成本扣除合计（元）</span>
-          <strong>{formatMoney(result.costBreakdown.totalCostCents)}</strong>
-        </div>
-        <div>
-          <span>本次可分配净收益（元）</span>
-          <strong>{formatMoney(result.costBreakdown.distributableNetIncomeCents)}</strong>
-        </div>
-        <div>
-          <span>本次是否首次进账</span>
-          <strong>{result.isFirstReceipt ? "是" : "否"}</strong>
-        </div>
-        <div>
-          <span>是否山东省内实施</span>
-          <strong>{result.inShandong ? "是" : "否"}</strong>
-        </div>
-      </div>
+      </details>
     </section>
   );
 }

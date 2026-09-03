@@ -10,9 +10,6 @@ interface ProjectFormProps {
 const methodOptions: TransformationMethod[] = [
   "transfer",
   "license",
-  "equity_cash",
-  "equity_cash_equity",
-  "equity_equity",
 ];
 
 function FieldHint({ value }: { value: string }) {
