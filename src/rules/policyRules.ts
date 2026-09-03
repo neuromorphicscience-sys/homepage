@@ -22,8 +22,8 @@ export const SHANDONG_RATE_ADJUSTMENTS: Record<FundKey, number> = {
 };
 
 export const METHOD_LABELS: Record<TransformationMethod, string> = {
-  transfer: "转让所有权",
-  license: "许可",
+  transfer: "所有权转让",
+  license: "所有权许可",
   equity_cash: "股权+货币资金",
   equity_cash_equity: "股权+货币资金+股权",
   equity_equity: "股权+股权",
