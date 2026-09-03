@@ -7,7 +7,6 @@ import { ProjectForm } from "./components/ProjectForm";
 import { ResultSummary } from "./components/ResultSummary";
 import { ResultTables } from "./components/ResultTables";
 import { calculateDistribution } from "./rules/calculator";
-import { POLICY_VERSION } from "./rules/policyRules";
 import type { CostInputs, FormState } from "./types";
 
 const emptyCosts: CostInputs = {
@@ -31,7 +30,6 @@ const defaultForm: FormState = {
   transformationMethod: "license",
   inShandong: true,
   installment: false,
-  policyVersion: POLICY_VERSION,
   costs: emptyCosts,
   cashOnlyForMixedEquity: false,
 };

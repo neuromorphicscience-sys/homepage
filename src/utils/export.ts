@@ -27,6 +27,17 @@ function percentCell(value: number): CellObject {
   return { value, type: Number, format: "0.00%" };
 }
 
+const EXPORT_TITLE = "山东大学科技成果转化现金收益分配测算结果";
+
+function buildExportBaseName(form: FormState): string {
+  const leaderName = form.leader
+    .trim()
+    .replace(/[\\/:*?"<>|]/g, "-")
+    .replace(/\s+/g, " ")
+    .replace(/[. ]+$/g, "");
+  return `${EXPORT_TITLE}-${leaderName || "未填写"}`;
+}
+
 function allocationRows(
   title: string,
   rows: AllocationDisplayRow[],
@@ -58,23 +69,23 @@ function allocationRows(
   ];
 }
 
-export async function exportExcel(result: CalculationResult): Promise<void> {
+export async function exportExcel(form: FormState, result: CalculationResult): Promise<void> {
   const { default: writeExcelFile } = await import("write-excel-file/browser");
   const summaryData: SheetData = [
-    [{ value: "山东大学科技成果转化现金收益分配测算结果", columnSpan: 4, fontWeight: "bold", fontSize: 16, textColor: "#7f101d", align: "center" }, null, null, null],
-    [{ value: "测算结果", columnSpan: 4, fontWeight: "bold", fontSize: 13 }, null, null, null],
+    [{ value: EXPORT_TITLE, columnSpan: 4, fontWeight: "bold", fontSize: 16, textColor: "#7f101d", align: "center" }, null, null, null],
+    [{ value: "测算依据概况", columnSpan: 4, fontWeight: "bold", fontSize: 13 }, null, null, null],
     ["本次到账现金（元）", moneyCell(result.inputsCents.currentReceiptCents)],
     ["本次成本扣除合计（元）", moneyCell(result.costBreakdown.totalCostCents)],
     ["本次可分配净收益（元）", moneyCell(result.costBreakdown.distributableNetIncomeCents)],
     ["是否首次进账", result.isFirstReceipt ? "是" : "否"],
-    ["是否山东省内实施", result.shandongAdjustmentsCents.team > 0 ? "是" : "否"],
+    ["是否山东省内实施", result.inShandong ? "是" : "否"],
     [],
     [{ value: "合计与明细查看", columnSpan: 4, fontWeight: "bold", fontSize: 13 }, null, null, null],
     ...allocationRows("学校部分", result.schoolPart.rows, "学校部分合计（元）", result.schoolPart.totalCents),
     ...allocationRows("成果完成人部分", result.inventorPart.rows, "成果完成人部分合计（元）", result.inventorPart.totalCents),
   ];
 
-  const adjustedRateLabel = result.shandongAdjustmentsCents.team > 0 ? "（省内调整后）" : "";
+  const adjustedRateLabel = result.inShandong ? "（省内调整后）" : "";
   const detailHeaders = [
     "阶梯区间",
     "合同额阶梯额度（元）",
@@ -120,18 +131,23 @@ export async function exportExcel(result: CalculationResult): Promise<void> {
       columns: detailHeaders.map((_, index) => ({ width: index === 0 ? 20 : index < 4 ? 24 : 27 })),
       stickyRowsCount: 1,
     },
-  ], { fontFamily: "Microsoft YaHei", fontSize: 11 }).toFile(`sdu-tech-transfer-result-${Date.now()}.xlsx`);
+  ], { fontFamily: "Microsoft YaHei", fontSize: 11 }).toFile(`${buildExportBaseName(form)}.xlsx`);
 }
 
-export function exportPrintablePdf(result: CalculationResult): void {
+export function exportPrintablePdf(form: FormState, result: CalculationResult): void {
   const printWindow = window.open("", "_blank", "width=1180,height=820");
   if (!printWindow) {
+    const previousTitle = document.title;
+    document.title = buildExportBaseName(form);
     window.print();
+    window.setTimeout(() => {
+      document.title = previousTitle;
+    }, 1_000);
     return;
   }
 
   printWindow.opener = null;
-  const adjustedRateLabel = result.shandongAdjustmentsCents.team > 0 ? "（省内调整后）" : "";
+  const adjustedRateLabel = result.inShandong ? "（省内调整后）" : "";
   const allocationHeader = ["分成项目", "原始分配金额（元）", "山东省内奖励调整金额（元）", "最终金额（元）"];
   const allocationRows = (rows: AllocationDisplayRow[]) => rows.map((row) => [
     row.name,
@@ -167,12 +183,13 @@ export function exportPrintablePdf(result: CalculationResult): void {
     formatMoney(slice.finalAmountsCents.school),
     formatMoney(slice.finalAmountsCents.special),
   ]);
+  const exportBaseName = buildExportBaseName(form);
 
   const html = `<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <title>山东大学科技成果转化现金收益分配测算结果</title>
+  <title>${escapeHtml(exportBaseName)}</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; padding: 28px; color: #1f2328; font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; line-height: 1.5; }
@@ -198,7 +215,7 @@ export function exportPrintablePdf(result: CalculationResult): void {
   <div class="disclaimer">${escapeHtml(DISCLAIMER)}</div>
   <div class="toolbar"><button type="button" onclick="window.print()">打印 / 另存为 PDF</button></div>
 
-  <h2>测算结果</h2>
+  <h2>测算依据概况</h2>
   <table class="summary"><tbody>${tableRows([
     ["学校部分合计（元）", formatMoney(result.schoolPart.totalCents)],
     ["成果完成人部分合计（元）", formatMoney(result.inventorPart.totalCents)],
@@ -208,11 +225,11 @@ export function exportPrintablePdf(result: CalculationResult): void {
   ])}</tbody></table>
 
   <h2>合计与明细查看</h2>
-  <h3>学校部分</h3>
+  <h3>现金收入分配 - 学校部分</h3>
   <table><thead>${tableRows([allocationHeader], true)}</thead><tbody>${tableRows(allocationRows(result.schoolPart.rows))}${tableRows([["学校部分合计（元）", "", "", formatMoney(result.schoolPart.totalCents)]])}</tbody></table>
-  <h3>成果完成人部分</h3>
+  <h3>现金收入分配 - 成果完成人部分</h3>
   <table><thead>${tableRows([allocationHeader], true)}</thead><tbody>${tableRows(allocationRows(result.inventorPart.rows))}${tableRows([["成果完成人部分合计（元）", "", "", formatMoney(result.inventorPart.totalCents)]])}</tbody></table>
-  <h3>阶梯计算明细表</h3>
+  <h3>具体明细 - 阶梯计算明细表</h3>
   <table><thead>${tableRows([sliceHeader], true)}</thead><tbody>${sliceRows.length ? tableRows(sliceRows) : `<tr><td colspan="12">暂无可展示的阶梯计算明细。</td></tr>`}</tbody></table>
 </body>
 </html>`;

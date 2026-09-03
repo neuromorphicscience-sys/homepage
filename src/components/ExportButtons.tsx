@@ -22,7 +22,7 @@ export function ExportButtons({ form, result, onStatus }: ExportButtonsProps) {
 
   const printPdf = () => {
     try {
-      exportPrintablePdf(result);
+      exportPrintablePdf(form, result);
       onStatus("已打开打印版页面，请在打印窗口中选择“另存为 PDF”。");
     } catch {
       onStatus("打印版页面打开失败，请检查浏览器弹窗拦截设置。");
@@ -31,7 +31,7 @@ export function ExportButtons({ form, result, onStatus }: ExportButtonsProps) {
 
   const downloadExcel = async () => {
     try {
-      await exportExcel(result);
+      await exportExcel(form, result);
       onStatus("Excel 文件已开始下载。");
     } catch {
       onStatus("Excel 导出失败，请稍后重试或更换浏览器。");

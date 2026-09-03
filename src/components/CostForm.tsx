@@ -40,25 +40,29 @@ export function CostForm({ costs, isFirstReceipt, onChange }: CostFormProps) {
   return (
     <section className={`panel ${!isFirstReceipt ? "panel--muted" : ""}`}>
       <div className="section-heading">
+        <span>模块 2</span>
         <h2>成本扣除信息</h2>
       </div>
 
       <div className="notice notice--info">
-        成本应在首次现金到账时一次性集中扣除；后续到账不再重复扣除已扣除的成本。
+        <strong className="notice__label">说明 1：</strong>
+        <span>成本应在首次现金到账时一次性集中扣除；后续到账不再重复扣除已扣除的成本。</span>
       </div>
 
       <div className="notice notice--info">
-        个人承担的专利费用按照实际发生额的两倍计入成本扣除，其中双倍扣除额的 50% 补偿至发明人个人，50% 补偿至发明人科研发展基金；科研经费及发展基金支出补偿至成果完成人科研发展基金；税费、评估费及其他成本仅作成本扣除，不予补偿。完成成本扣除及补偿后，剩余净收益按照规定比例分配。
+        <strong className="notice__label">说明 2：</strong>
+        <span>个人承担的专利费用按照实际发生额的两倍计入成本扣除，其中双倍扣除额的 50% 补偿至发明人个人，50% 补偿至发明人科研发展基金；科研经费及发展基金支出补偿至成果完成人科研发展基金；税费、评估费及其他成本仅作成本扣除，不予补偿。完成成本扣除及补偿后，剩余净收益按照规定比例分配。</span>
       </div>
 
       {!isFirstReceipt && (
         <div className="notice notice--info">
-          当前为后续到账。本项目成本已于首次到账时集中扣除，本次到账不再重复扣除。
+          <strong className="notice__label">说明 3：</strong>
+          <span>当前为后续到账。本项目成本已于首次到账时集中扣除，本次到账不再重复扣除。</span>
         </div>
       )}
 
       <fieldset className="cost-fieldset">
-        <legend>专利费用及科研经费补偿</legend>
+        <legend>科技成果成本补偿</legend>
         <div className="form-grid form-grid--compact">{patentCostLabels.map(renderCostField)}</div>
       </fieldset>
 

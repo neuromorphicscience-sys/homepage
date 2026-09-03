@@ -28,7 +28,6 @@ export interface FormState {
   transformationMethod: TransformationMethod;
   inShandong: boolean;
   installment: boolean;
-  policyVersion: string;
   costs: CostInputs;
   cashOnlyForMixedEquity: boolean;
 }
@@ -106,6 +105,7 @@ export interface CalculationResult {
   canCalculate: boolean;
   messages: ValidationMessage[];
   isFirstReceipt: boolean;
+  inShandong: boolean;
   costBreakdown: CostBreakdown;
   originalTotalsCents: Record<FundKey, number>;
   shandongAdjustmentsCents: Record<FundKey, number>;

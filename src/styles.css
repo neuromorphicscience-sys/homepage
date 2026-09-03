@@ -58,17 +58,6 @@ button {
   padding: 46px 0 38px;
 }
 
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  height: 28px;
-  padding: 0 10px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.86);
-  font-size: 13px;
-}
-
 h1,
 h2,
 h3,
@@ -78,7 +67,7 @@ p {
 
 h1 {
   max-width: 920px;
-  margin: 18px 0 10px;
+  margin: 0 0 10px;
   font-size: clamp(28px, 5vw, 46px);
   line-height: 1.16;
   letter-spacing: 0;
@@ -113,16 +102,6 @@ h3 {
   background: rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.94);
   line-height: 1.6;
-}
-
-.policy-chip {
-  display: inline-flex;
-  margin-top: 16px;
-  padding: 7px 10px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
 }
 
 .page-main {
@@ -478,14 +457,6 @@ button:disabled {
   word-break: normal;
 }
 
-.form-row-hint {
-  grid-column: 1 / -1;
-  margin-top: -8px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
 .metric-grid,
 .info-grid {
   display: grid;
@@ -583,6 +554,11 @@ button:disabled {
   font-size: 14px;
 }
 
+.notice__label {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .panel > .notice {
   margin-bottom: 14px;
 }
@@ -646,7 +622,14 @@ button:disabled {
   margin-left: auto;
 }
 
+.module-four > .section-heading {
+  margin-bottom: 0;
+}
+
 .collapsible-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
   padding: 0;
   overflow: hidden;
 }
@@ -914,8 +897,6 @@ tr.table-emphasis td {
     padding: 0 0 12px;
   }
 
-  .eyebrow,
-  .policy-chip,
   .disclaimer {
     border-color: #999999;
     background: #ffffff;

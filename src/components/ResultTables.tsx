@@ -34,13 +34,18 @@ function AllocationTable({ rows }: { rows: AllocationDisplayRow[] }) {
 }
 
 export function ResultTables({ result }: ResultTablesProps) {
-  const adjustedRateLabel = result.shandongAdjustmentsCents.team > 0 ? "（省内调整后）" : "";
+  const adjustedRateLabel = result.inShandong ? "（省内调整后）" : "";
 
   return (
-    <section className="tables-stack print-block" aria-label="合计与明细查看">
-      <details className="panel collapsible-panel allocation-section allocation-section--school">
+    <section className="panel tables-stack module-four print-block" aria-label="合计与明细查看">
+      <div className="section-heading">
+        <span>模块 4</span>
+        <h2>合计与明细查看</h2>
+      </div>
+
+      <details className="collapsible-panel allocation-section allocation-section--school">
         <summary className="collapsible-summary">
-          <span>合计与明细查看</span>
+          <span>现金收入分配</span>
           <h3>学校部分</h3>
         </summary>
         <div className="collapsible-content">
@@ -52,9 +57,9 @@ export function ResultTables({ result }: ResultTablesProps) {
         </div>
       </details>
 
-      <details className="panel collapsible-panel allocation-section allocation-section--inventor">
+      <details className="collapsible-panel allocation-section allocation-section--inventor">
         <summary className="collapsible-summary">
-          <span>合计与明细查看</span>
+          <span>现金收入分配</span>
           <h3>成果完成人部分</h3>
         </summary>
         <div className="collapsible-content">
@@ -66,8 +71,9 @@ export function ResultTables({ result }: ResultTablesProps) {
         </div>
       </details>
 
-      <details className="panel panel--muted collapsible-panel">
-        <summary className="collapsible-summary collapsible-summary--single">
+      <details className="collapsible-panel allocation-section">
+        <summary className="collapsible-summary">
+          <span>具体明细</span>
           <h3>阶梯计算明细表</h3>
         </summary>
         <div className="collapsible-content">

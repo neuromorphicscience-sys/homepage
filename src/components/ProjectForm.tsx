@@ -24,22 +24,11 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
   return (
     <section className="panel">
       <div className="section-heading">
+        <span>模块 1</span>
         <h2>项目基本信息</h2>
       </div>
 
       <div className="form-grid">
-        <label>
-          成果名称
-          <input value={form.achievementName} onChange={(event) => onChange("achievementName", event.target.value)} />
-        </label>
-        <label>
-          审批表编号
-          <input value={form.contractNo} onChange={(event) => onChange("contractNo", event.target.value)} />
-        </label>
-        <label>
-          技术合同登记号（选填）
-          <input value={form.registrationNo} onChange={(event) => onChange("registrationNo", event.target.value)} />
-        </label>
         <label>
           成果负责人
           <input value={form.leader} onChange={(event) => onChange("leader", event.target.value)} />
@@ -49,8 +38,20 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
           <input value={form.department} onChange={(event) => onChange("department", event.target.value)} />
         </label>
         <label>
-          受让方
+          成果名称（选填）
+          <input value={form.achievementName} onChange={(event) => onChange("achievementName", event.target.value)} />
+        </label>
+        <label>
+          受让方（选填）
           <input value={form.transferee} onChange={(event) => onChange("transferee", event.target.value)} />
+        </label>
+        <label>
+          审批表编号（选填）
+          <input value={form.contractNo} onChange={(event) => onChange("contractNo", event.target.value)} />
+        </label>
+        <label>
+          技术合同登记号（选填）
+          <input value={form.registrationNo} onChange={(event) => onChange("registrationNo", event.target.value)} />
         </label>
         <label>
           合同总金额（元）
@@ -98,9 +99,6 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
             ))}
           </select>
         </label>
-        <div className="form-row-hint">
-          该字段仅用于判断是否为首次到账，从而决定本次是否扣除成本；不参与阶梯比例切片。
-        </div>
         <label>
           是否山东省内实施
           <select
@@ -120,10 +118,6 @@ export function ProjectForm({ form, onChange }: ProjectFormProps) {
             <option value="yes">是</option>
             <option value="no">否</option>
           </select>
-        </label>
-        <label>
-          政策版本
-          <input value={form.policyVersion} onChange={(event) => onChange("policyVersion", event.target.value)} />
         </label>
       </div>
 
